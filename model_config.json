@@ -1,0 +1,82 @@
+{
+  "model_type": "Gradient Boosting",
+  "task": "multi-class classification (AdoptionSpeed 0-4)",
+  "classes": {
+    "0": "Primeros 7 dias",
+    "1": "8-30 dias",
+    "2": "31-90 dias",
+    "3": "No adoptado"
+  },
+  "feature_columns": [
+    "Age",
+    "Breed1",
+    "Gender",
+    "MaturitySize",
+    "FurLength",
+    "Vaccinated",
+    "Dewormed",
+    "Sterilized",
+    "Health",
+    "Quantity",
+    "Fee",
+    "PhotoAmt",
+    "VideoAmt",
+    "is_mixed_breed",
+    "has_name",
+    "is_puppy",
+    "is_free",
+    "desc_length",
+    "desc_word_count",
+    "health_score",
+    "age_bucket",
+    "has_photos",
+    "has_video"
+  ],
+  "n_features": 23,
+  "metrics": {
+    "cv_accuracy_mean": 0.44060529910769297,
+    "cv_accuracy_std": 0.004873293357900619,
+    "cv_f1_macro_mean": 0.42349920548374065,
+    "cv_f1_macro_std": 0.004569811537844184
+  },
+  "compatibility": {
+    "formula": "alpha * similarity + beta * ml_score",
+    "alpha": 0.6,
+    "beta": 0.4,
+    "similarity_method": "Euclidean distance normalized to [0,1]",
+    "ml_score_method": "sum of predict_proba for classes 0,1,2 (adopted within 30 days)"
+  },
+  "questionnaire": {
+    "total_questions": 20,
+    "categories": {
+      "activity": {
+        "questions": "Q1-Q5",
+        "compares_with": "Age + MaturitySize"
+      },
+      "housing": {
+        "questions": "Q6-Q10",
+        "compares_with": "MaturitySize"
+      },
+      "experience": {
+        "questions": "Q11-Q15",
+        "compares_with": "Age + Health"
+      },
+      "care": {
+        "questions": "Q16-Q20",
+        "compares_with": "Health + health_score + Fee"
+      }
+    },
+    "user_vector_dimensions": [
+      "activity_score",
+      "housing_score",
+      "experience_score",
+      "care_score"
+    ],
+    "dog_vector_mapping": {
+      "activity_req": "(age_activity + size_activity) / 2",
+      "space_req": "MaturitySize mapped to 1.5-5.0",
+      "training_diff": "(age_training + health_training) / 2",
+      "care_req": "(health_base + medical_need) / 2"
+    }
+  }
+}

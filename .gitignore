@@ -1,4 +1,2 @@
-BreedLabels.csv
-adoption_model.pkl
-model_config.json
-train.csv
+/tests
+CLAUDE.md

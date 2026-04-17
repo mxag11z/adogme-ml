@@ -1,0 +1,8 @@
+train.csv
+aDOGme_ML_20Q.ipynb
+BreedLabels.csv
+.git/
+tests/
+__pycache__/
+*.pyc
+.env
