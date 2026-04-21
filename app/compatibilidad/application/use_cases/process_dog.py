@@ -2,6 +2,7 @@ import numpy as np
 
 from ...domain.entities.dog_entity import DogEntity
 from ...domain.repositories.prediction_repository import PredictionRepository
+from ...domain.repositories.dog_repository import DogRepository
 
 SPEED_LABELS = {
     0: "Primeros 7 dias",
@@ -21,13 +22,19 @@ class ProcessDogResult:
 class ProcessDog:
     """Receives a dog from the CRUD microservice, computes AdoptionSpeed + dog_vector, returns them."""
 
-    def __init__(self, prediction_repo: PredictionRepository):
+    def __init__(self, prediction_repo: PredictionRepository, dog_repo: DogRepository):
         self.prediction_repo = prediction_repo
+        self.dog_repo = dog_repo
 
-    def execute(self, dog: DogEntity) -> ProcessDogResult:
+    async def execute(self, dog: DogEntity) -> ProcessDogResult:
         probs = self.prediction_repo.predict_proba(dog)
         adoption_speed = int(np.argmax(probs))
         dog_vector = dog.to_vector()
+
+        dog.AdoptionSpeed = adoption_speed
+        dog.dog_vector = dog_vector
+
+        await self.dog_repo.create_dog(dog)
 
         return ProcessDogResult(
             adoption_speed=adoption_speed,

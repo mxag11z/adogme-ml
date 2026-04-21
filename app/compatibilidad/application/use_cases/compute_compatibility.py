@@ -36,6 +36,7 @@ class ComputeCompatibility:
 
             results.append(CompatibilityResult(
                 dog_id=dog.id,
+                dog_service_id=dog.dog_service_id,
                 compatibility_score=compatibility_score,
                 similarity=similarity,
                 ml_score=ml_score,

@@ -7,3 +7,7 @@ class DogRepository(ABC):
     @abstractmethod
     async def get_all(self) -> list[DogEntity]:
         pass
+
+    @abstractmethod
+    async def create_dog(self, dog: DogEntity) -> DogEntity:
+        pass
