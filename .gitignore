@@ -21,3 +21,7 @@ env/
 # IDEs
 .vscode/
 .idea/
+
+# Playgrounds
+editor.py
+app/editor.py
