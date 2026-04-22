@@ -26,7 +26,7 @@ class ProcessDog:
         self.prediction_repo = prediction_repo
         self.dog_repo = dog_repo
 
-    async def execute(self, dog: DogEntity) -> ProcessDogResult:
+    async def execute(self, dog: DogEntity, mode: str = "create") -> ProcessDogResult:
         probs = self.prediction_repo.predict_proba(dog)
         adoption_speed = int(np.argmax(probs))
         dog_vector = dog.to_vector()
@@ -34,7 +34,10 @@ class ProcessDog:
         dog.AdoptionSpeed = adoption_speed
         dog.dog_vector = dog_vector
 
-        await self.dog_repo.create_dog(dog)
+        if mode == "create":
+            await self.dog_repo.create_dog(dog)
+        elif mode == "update":
+            await self.dog_repo.update_dog(dog)
 
         return ProcessDogResult(
             adoption_speed=adoption_speed,

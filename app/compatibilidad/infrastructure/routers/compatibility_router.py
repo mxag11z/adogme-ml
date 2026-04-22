@@ -56,10 +56,26 @@ async def process_dog(
     ml_repo: PredictionRepository = Depends(get_ml_repo),
     dog_repo: DogRepository = Depends(get_dog_repo)
 ):
-    """Called by CRUD microservice when a dog is created/updated.
+    """Called by CRUD microservice when a dog is created.
     Returns adoption_speed + dog_vector for the CRUD service to persist."""
     use_case = ProcessDog(ml_repo, dog_repo)
     result = await use_case.execute(dog)
+    return {
+        "adoption_speed": result.adoption_speed,
+        "speed_label": result.speed_label,
+        "dog_vector": result.dog_vector,
+    }
+
+@router.put("/predict/process-dog")
+async def update_dog(
+    dog: DogEntity, 
+    ml_repo: PredictionRepository = Depends(get_ml_repo),
+    dog_repo: DogRepository = Depends(get_dog_repo)
+):
+    """Called by CRUD microservice when a dog is updated.
+    Returns adoption_speed + dog_vector for the CRUD service to persist."""
+    use_case = ProcessDog(ml_repo, dog_repo)
+    result = await use_case.execute(dog, mode="update")
     return {
         "adoption_speed": result.adoption_speed,
         "speed_label": result.speed_label,

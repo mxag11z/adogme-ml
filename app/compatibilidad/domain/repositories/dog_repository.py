@@ -11,3 +11,11 @@ class DogRepository(ABC):
     @abstractmethod
     async def create_dog(self, dog: DogEntity) -> DogEntity:
         pass
+
+    @abstractmethod
+    async def update_dog(self, dog: DogEntity) -> DogEntity:
+        pass
+
+    @abstractmethod
+    async def get_by_service_id(self, dog_service_id: str) -> DogEntity | None:
+        pass
