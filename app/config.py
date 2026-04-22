@@ -7,8 +7,8 @@ class Settings(BaseSettings):
     ALPHA: float = 0.6
     BETA: float = 0.4
     HOST: str = "0.0.0.0"
-    PORT: int = 8000
-    DATABASE_URL: str = "postgresql+asyncpg://adogme_user:adogme_pass@localhost:5432/adogme"
+    PORT: int = 8080
+    DATABASE_URL: str = ""
 
     class Config:
         env_file = ".env"

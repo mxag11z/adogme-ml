@@ -1,10 +1,15 @@
-from pydantic import BaseModel, Field
+from sqlmodel import SQLModel, Field
+from sqlalchemy import Column, Float
+from sqlalchemy.dialects.postgresql import ARRAY
 from typing import Optional
 import numpy as np
 
 
-class DogEntity(BaseModel):
-    id: Optional[int] = None
+class DogEntity(SQLModel, table=True):
+    __tablename__ = "dogs"
+    __table_args__ = {"schema": "ml_service"}
+    id: Optional[int] = Field(default=None, primary_key=True)
+    dog_service_id: str = Field(index=True, unique=True, description="ID reference from Main Dog Microservice")
     Name: Optional[str] = None
     Age: int = Field(..., ge=0, description="Age in months")
     Breed1: int
@@ -22,7 +27,7 @@ class DogEntity(BaseModel):
     VideoAmt: int = Field(0, ge=0)
     Description: str = ""
     AdoptionSpeed: Optional[int] = Field(None, ge=0, le=3)
-    dog_vector: Optional[list[float]] = None
+    dog_vector: Optional[list[float]] = Field(default=None, sa_column=Column(ARRAY(Float)))
 
     def is_mixed_breed(self) -> bool:
         return self.Breed2 != 0 or self.Breed1 == 307 or self.Breed2 == 307

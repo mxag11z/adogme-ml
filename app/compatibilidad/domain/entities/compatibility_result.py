@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 class CompatibilityResult(BaseModel):
     dog_id: int
+    dog_service_id: str
     compatibility_score: float
     similarity: float
     ml_score: float
