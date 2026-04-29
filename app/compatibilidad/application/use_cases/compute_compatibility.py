@@ -57,10 +57,18 @@ class ComputeCompatibility:
         )
 
     def _compute_similarity(self, user_vector: list[float], dog_vector: list[float]) -> float:
-        """Calcula la similitud entre el vector del usuario y el vector del perro usando distancia euclidiana normalizada."""
+        """Calcula la similitud usando distancia euclidiana asimetrica.
+
+        Solo penaliza cuando el perro requiere MAS de lo que el usuario ofrece.
+        Si el usuario tiene de mas (sobre-cualificado) no penaliza, ya que eso
+        no genera incompatibilidad real en una adopcion."""
         user_arr = np.array(user_vector)
         dog_arr = np.array(dog_vector)
-        distance = np.sqrt(np.sum((user_arr - dog_arr) ** 2))
+        # Solo cuenta la diferencia cuando dog > user (perro requiere mas que el usuario)
+        deficits = np.maximum(0.0, dog_arr - user_arr)
+        distance = np.sqrt(np.sum(deficits ** 2))
         max_distance = np.sqrt(4 * (5 - 1) ** 2)  # = 8.0
         similarity = 1.0 - (distance / max_distance)
         return round(max(0.0, float(similarity)), 4)
+
+
