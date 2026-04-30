@@ -114,7 +114,7 @@ async def general_recommendations(ml_repo: PredictionRepository = Depends(get_ml
     use_case = GetDogRecommendations(ml_repo)
     return use_case.execute()
 
-@router.delete("/dogs/{dogId}")
+@router.delete("/dogs/{dog_id}")
 async def delete_dog(
     dog_id: str,
     dog_repo: DogRepository = Depends(get_dog_repo)
