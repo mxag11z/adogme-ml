@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from fastapi import APIRouter, Request, Depends, Query
 from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,6 +15,7 @@ from ...application.use_cases.compute_compatibility import ComputeCompatibility
 from ...application.use_cases.process_dog import ProcessDog
 from ...application.use_cases.process_questionnaire import ProcessQuestionnaire
 from ...application.use_cases.get_dog_recommendations import GetDogRecommendations
+from ...application.use_cases.delete_dog import DeleteDog
 from ...infrastructure.ml_prediction_repository import MlPredictionRepository
 from ...infrastructure.db_dog_repository import DbDogRepository
 from ....database import get_session
@@ -111,3 +113,15 @@ async def compatible_dogs(
 async def general_recommendations(ml_repo: PredictionRepository = Depends(get_ml_repo)):
     use_case = GetDogRecommendations(ml_repo)
     return use_case.execute()
+
+@router.delete("/dogs/{dogId}")
+async def delete_dog(
+    dog_id: str,
+    dog_repo: DogRepository = Depends(get_dog_repo)
+):
+    """Called by CRUD microservice when a dog is deleted."""
+    use_case = DeleteDog(dog_repo)
+    result = await use_case.execute(dog_id)
+    if not result:
+        raise HTTPException(status_code=404, detail="Dog not found, could not delete")
+    return {"message": "Dog deleted successfully"}

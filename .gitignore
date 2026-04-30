@@ -25,3 +25,4 @@ env/
 # Playgrounds
 editor.py
 app/editor.py
+cloud_function.py

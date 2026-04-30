@@ -37,3 +37,13 @@ class DbDogRepository(DogRepository):
         await self.session.commit()
         await self.session.refresh(db_dog)
         return db_dog
+
+    async def delete_dog(self, dog_id: str) -> bool:
+        statement = select(DogEntity).where(DogEntity.dog_service_id == dog_id)
+        result = await self.session.execute(statement)
+        dog = result.scalars().first()
+        if not dog:
+            return False
+        await self.session.delete(dog)
+        await self.session.commit()
+        return True
