@@ -37,4 +37,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(compatibility_router)
+app.include_router(compatibility_router, prefix="/ml-ms")
