@@ -11,6 +11,22 @@ SPEED_LABELS = {
     3: "No adoptado",
 }
 
+
+def compute_similarity(user_vector: list[float], dog_vector: list[float]) -> float:
+    """Calcula la similitud usando distancia euclidiana asimetrica.
+
+    Solo penaliza cuando el perro requiere MAS de lo que el usuario ofrece.
+    Si el usuario tiene de mas (sobre-cualificado) no penaliza, ya que eso
+    no genera incompatibilidad real en una adopcion."""
+    user_arr = np.array(user_vector)
+    dog_arr = np.array(dog_vector)
+    deficits = np.maximum(0.0, dog_arr - user_arr)
+    distance = np.sqrt(np.sum(deficits ** 2))
+    max_distance = np.sqrt(4 * (5 - 1) ** 2)  # = 8.0
+    similarity = 1.0 - (distance / max_distance)
+    return round(max(0.0, float(similarity)), 4)
+
+
 class ComputeCompatibility:
     def __init__(self, dog_repo: DogRepository, alpha: float = 0.6, beta: float = 0.4):
         self.dog_repo = dog_repo
@@ -26,7 +42,7 @@ class ComputeCompatibility:
                 continue
 
             ##estamos comparando el vector del usuario con el vector del perro, con cada perro en la base de datos.
-            similarity = self._compute_similarity(user_vector, dog.dog_vector)
+            similarity = compute_similarity(user_vector, dog.dog_vector)
 
             # Normalizamos, la adoption speed es inversamente proporcional a la compatibilidad, por eso restamos de 1.0
             ml_score = round(1.0 - (dog.AdoptionSpeed / 3.0), 4)
@@ -55,18 +71,3 @@ class ComputeCompatibility:
             top_n=top_n,
             results=results[:top_n],
         )
-
-    def _compute_similarity(self, user_vector: list[float], dog_vector: list[float]) -> float:
-        """Calcula la similitud usando distancia euclidiana asimetrica.
-
-        Solo penaliza cuando el perro requiere MAS de lo que el usuario ofrece.
-        Si el usuario tiene de mas (sobre-cualificado) no penaliza, ya que eso
-        no genera incompatibilidad real en una adopcion."""
-        user_arr = np.array(user_vector)
-        dog_arr = np.array(dog_vector)
-        # Solo cuenta la diferencia cuando dog > user (perro requiere mas que el usuario)
-        deficits = np.maximum(0.0, dog_arr - user_arr)
-        distance = np.sqrt(np.sum(deficits ** 2))
-        max_distance = np.sqrt(4 * (5 - 1) ** 2)  # = 8.0
-        similarity = 1.0 - (distance / max_distance)
-        return round(max(0.0, float(similarity)), 4)

@@ -12,6 +12,7 @@ from ...domain.entities.compatibility_result import (
 from ...domain.repositories.dog_repository import DogRepository
 from ...domain.repositories.prediction_repository import PredictionRepository
 from ...application.use_cases.compute_compatibility import ComputeCompatibility
+from ...application.use_cases.compute_single_compatibility import ComputeSingleCompatibility
 from ...application.use_cases.process_dog import ProcessDog
 from ...application.use_cases.process_questionnaire import ProcessQuestionnaire
 from ...application.use_cases.get_dog_recommendations import GetDogRecommendations
@@ -38,6 +39,14 @@ def get_ml_repo(request: Request) -> PredictionRepository:
 
 class RankingRequest(BaseModel):
     user_vector: list[float] = Field(..., min_length=4, max_length=4)
+
+
+# -- Response models --
+
+class SingleCompatibilityResponse(BaseModel):
+    compatibility_score: float
+    user_vector: list[float] | None = None
+    dog_vector: list[float] | None = None
 
 
 # -- Endpoints --
@@ -94,6 +103,24 @@ async def process_questionnaire(answers: UserAnswerEntity):
     return {
         "user_vector": user_vector,
     }
+
+
+@router.post("/predict/compatibility/{dog_id}", response_model=SingleCompatibilityResponse)
+async def predict_single_compatibility(
+    dog_id: str,
+    answers: UserAnswerEntity,
+    request: Request,
+    dog_repo: DogRepository = Depends(get_dog_repo),
+):
+    user_vector = ProcessQuestionnaire().execute(answers)
+    result = await ComputeSingleCompatibility(dog_repo, request.app.state.alpha, request.app.state.beta).execute(dog_id, user_vector)
+    if result is None:
+        raise HTTPException(status_code=404, detail="Dog not found or missing vector/adoption speed")
+    return SingleCompatibilityResponse(
+        compatibility_score=result.compatibility_score,
+        user_vector=result.user_vector,
+        dog_vector=result.dog_vector,
+    )
 
 
 @router.post("/predict/compatible-dogs", response_model=CompatibilityRankingResult)
