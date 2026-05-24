@@ -1,5 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
+from typing import Optional
 from ..entities.dog_entity import DogEntity
 
 ##Unico abstract method ya que solo necesitamos obtener la lista de perros para el ranking de compatibilidad. El procesamiento individual de cada perro se hace en el use case ProcessDog, que también se apoya en PredictionRepository para obtener insights y vectorizar al perro.
@@ -17,5 +18,5 @@ class DogRepository(ABC):
         pass
 
     @abstractmethod
-    async def get_by_service_id(self, dog_service_id: str) -> DogEntity | None:
+    async def get_by_service_id(self, dog_service_id: str) -> Optional[DogEntity]:
         pass

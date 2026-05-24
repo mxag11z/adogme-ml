@@ -1,3 +1,5 @@
+from __future__ import annotations
+from typing import Optional
 from fastapi import HTTPException
 from fastapi import APIRouter, Request, Depends, Query
 from pydantic import BaseModel, Field
@@ -45,8 +47,8 @@ class RankingRequest(BaseModel):
 
 class SingleCompatibilityResponse(BaseModel):
     compatibility_score: float
-    user_vector: list[float] | None = None
-    dog_vector: list[float] | None = None
+    user_vector: Optional[list[float]] = None
+    dog_vector: Optional[list[float]] = None
 
 
 # -- Endpoints --

@@ -1,4 +1,6 @@
+from __future__ import annotations
 from dataclasses import dataclass
+from typing import Optional
 
 from ...domain.repositories.dog_repository import DogRepository
 from .compute_compatibility import compute_similarity
@@ -17,7 +19,7 @@ class ComputeSingleCompatibility:
         self.alpha = alpha
         self.beta = beta
 
-    async def execute(self, dog_service_id: str, user_vector: list[float]) -> SingleCompatibilityResult | None:
+    async def execute(self, dog_service_id: str, user_vector: list[float]) -> Optional[SingleCompatibilityResult]:
         dog = await self.dog_repo.get_by_service_id(dog_service_id)
         if dog is None or not dog.dog_vector or dog.AdoptionSpeed is None:
             return None

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Optional
 from sqlmodel import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from ..domain.entities.dog_entity import DogEntity
@@ -19,7 +20,7 @@ class DbDogRepository(DogRepository):
         await self.session.refresh(dog)
         return dog
 
-    async def get_by_service_id(self, dog_service_id: str) -> DogEntity | None:
+    async def get_by_service_id(self, dog_service_id: str) -> Optional[DogEntity]:
         statement = select(DogEntity).where(DogEntity.dog_service_id == dog_service_id)
         result = await self.session.execute(statement)
         return result.scalars().first()
